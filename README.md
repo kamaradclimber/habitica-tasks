@@ -2,6 +2,13 @@
 
 This gem helps to automatize some task patterns in habitica. It starts by scratching my own itch with future tasks.
 
+## Configuration
+
+Create a file `$HOME/.config/habitica-tasks/config.yml` and populate with at least:
+```
+user_id: xxx-xxx-xxx-xxx-xxxx
+api_token: xxx-xxx-xxx-xxx-xxxx
+```
 
 ## Future tasks
 
