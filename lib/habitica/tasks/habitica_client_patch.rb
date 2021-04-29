@@ -14,6 +14,15 @@ class HabiticaClient
     Task.instance_methods.group_by { |m| m.to_s.gsub(/=$/, '') }.select { |k, v| k =~ /\w/ && v.size > 1 }.keys.then do |all_attr|
       hashup(*all_attr)
     end
+
+    # depending on the type of task will either complete the task (Todo/Dailies) or increase the score of a habbit
+    def score_up
+      uri = [url, 'score/up'].join('/')
+      response = client.class.post(uri)
+      raise ServerError, response['err'] unless response.response.code =~ /2\d{2}/
+
+      response.parsed_response['data']
+    end
   end
 
   class Client

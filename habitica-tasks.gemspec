@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency 'habitica_client'
+  spec.add_runtime_dependency 'jira-ruby'
 
   spec.add_development_dependency 'pry'
 end

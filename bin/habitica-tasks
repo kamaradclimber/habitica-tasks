@@ -10,5 +10,7 @@ require 'habitica/tasks/synchronization'
 config = Habitica::Tasks::Config.load
 client = HabiticaClient.new(config.user_id, config.api_token)
 
-Habitica::Tasks::FutureTaskToStore.new(client).run
-Habitica::Tasks::StoreToFutureTask.new(client).run
+Habitica::Tasks::FutureTaskToStore.new(client, config).run
+Habitica::Tasks::StoreToFutureTask.new(client, config).run
+
+Habitica::Tasks::JiraToHabitica.new(client, config).run
