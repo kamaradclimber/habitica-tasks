@@ -34,3 +34,12 @@ jira:
   site: 'htps://...'
 ```
 (note: all options supported by https://github.com/sumoheavy/jira-ruby can be passed there)
+
+# Contribute
+
+Contributions are welcomed!
+
+- To contribute a new feature, make sure to create an issue first to describe the feature.
+- To contribute a nontrivial bugfix, make sure to create an issue first.
+
+This repository does not have any tests, I'm mostly using for my own usage and I'm not afraid to debug the program once in a while.
