@@ -55,6 +55,7 @@ module Habitica
         client
           .tasks
           .filter_map { |task| Habitica::Tasks::FutureTask.new(task) if Habitica::Tasks::FutureTask.match?(task) }
+          .select { |task| task.to_create_date > Date.today }
           .each do |task|
           puts "Treating #{summarize(task.text)}:"
           puts "* should be created on #{task.to_create_date}"

@@ -17,6 +17,7 @@ module Habitica
         super
       end
 
+      # @return [Boolean] true if task looks like a "future" task
       def self.match?(task)
         !!extract_to_create_date(task)
       end
