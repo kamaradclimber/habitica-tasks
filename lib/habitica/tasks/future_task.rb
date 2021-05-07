@@ -66,15 +66,29 @@ module Habitica
         response = client.client.class.post(url, body: hash.to_json)
         raise response.to_s unless response.success?
 
-        raise "Now we should implement the ability to restore checklist" unless checklist.empty?
-        raise "Now we should implement the ability to restore challenge" unless challenge.empty?
+        new_id = response['data']['id']
+        restore_checklist(new_id, checklist)
+
+        raise 'Now we should implement the ability to restore challenge' unless challenge.empty?
         # raise "Now we should implement the ability to restore group" unless group TODO
       ensure
         # we have to restore the id to be able to identify the task
         self.id = id
       end
-    end
 
+      def restore_checklist(id, checklist)
+        url = __getobj__.send(:url).gsub('/user', '') + "#{id}/checklist"
+        checklist.each do |item|
+          response = client.client.class.post(url, body: { text: item['text'] }.to_json)
+          raise response.to_s unless response.success?
+
+          if item['completed']
+            item_id = response['data']['checklist'].last['id']
+            response = client.client.class.post(url + "/#{item_id}/score")
+            raise response.to_s unless response.success?
+          end
+        end
+      end
+    end
   end
 end
-
