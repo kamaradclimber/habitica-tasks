@@ -17,7 +17,7 @@ module Habitica
       def initialize(client, config)
         @client = client
         @config = config
-        @task_store = Habitica::Tasks::TaskStore.new
+        @task_store = Habitica::Tasks::HabiticaEmbeddedTaskStore.new(client)
       end
 
       # synchronize
@@ -73,7 +73,7 @@ module Habitica
     class StoreToFutureTask < SynchronizationTask
       def run
         task_store
-          .all_stored_tasks(client)
+          .all_stored_tasks
           .select { |t| t.is_a?(Habitica::Tasks::FutureTask) }
           .each do |task|
           puts "Treating #{summarize(task.text)}:"
@@ -105,6 +105,7 @@ module Habitica
         jira_tasks = client
           .tasks
           .filter_map { |task| Habitica::Tasks::JiraTask.new(task) if Habitica::Tasks::JiraTask.match?(task) }
+        achieved.reject! { |task| task.key == 'SO-4987' } # DONT COMMIT THIS: this ticket is frozen and we don't handle this yet
 
         created_tasks = create_missing_tickets(unresolved_tickets + achieved, jira_tasks)
         resolve_tasks(achieved, jira_tasks + created_tasks)

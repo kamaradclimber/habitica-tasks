@@ -8,7 +8,7 @@ module Habitica
 
       attr_reader :to_create_date
 
-      # @param task [HabiticaClient::Tasks]
+      # @param task [HabiticaClient::Task]
       def initialize(task)
         raise ArgumentError, "task is not a HabiticaClient::Task instance" unless task.is_a?(HabiticaClient::Task)
         raise ArgumentError, "task cannot be considered as a future task" unless self.class.match?(task)
@@ -19,7 +19,7 @@ module Habitica
 
       # @return [Boolean] true if task looks like a "future" task
       def self.match?(task)
-        !!extract_to_create_date(task)
+        !!extract_to_create_date(task) && task.type == 'todo'
       end
 
       def self.extract_to_create_date(task)
@@ -63,7 +63,7 @@ module Habitica
 
         url = __getobj__.send(:url).gsub(%r{/$}, '') # HACK: fix url to create new tasks
 
-        response = client.client.class.post(url, body: hash.to_json)
+        response = client.class.post(url, body: hash.to_json)
         raise response.to_s unless response.success?
 
         new_id = response['data']['id']
