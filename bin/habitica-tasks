@@ -7,7 +7,7 @@ require 'habitica/tasks/future_task'
 require 'habitica/tasks/synchronization'
 
 
-config = Habitica::Tasks::Config.load
+config = Habitica::Tasks::Config.load(ENV['HABITICA_TASKS_CONFIG_FILE'])
 client = HabiticaClient.new(config.user_id, config.api_token)
 
 Habitica::Tasks::FutureTaskToStore.new(client, config).run

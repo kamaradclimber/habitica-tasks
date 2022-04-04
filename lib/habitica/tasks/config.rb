@@ -23,7 +23,8 @@ module Habitica
         end
       end
 
-      def self.load(file = "#{ENV['HOME']}/.config/habitica-tasks/config.yml")
+      def self.load(file)
+        file ||= "#{ENV['HOME']}/.config/habitica-tasks/config.yml"
         raise ArgumentError, "#{file} does not exist" unless File.exist?(file)
 
         config_yaml = YAML.safe_load(File.read(file))
