@@ -26,4 +26,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'jira-ruby'
 
   spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'rubocop'
 end
