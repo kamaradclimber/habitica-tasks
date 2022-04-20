@@ -79,12 +79,12 @@ module Habitica
       def restore_checklist(id, checklist)
         url = __getobj__.send(:url).gsub('/user', '') + "#{id}/checklist"
         checklist.each do |item|
-          response = client.client.class.post(url, body: { text: item['text'] }.to_json)
+          response = client.class.post(url, body: { text: item['text'] }.to_json)
           raise response.to_s unless response.success?
 
           if item['completed']
             item_id = response['data']['checklist'].last['id']
-            response = client.client.class.post(url + "/#{item_id}/score")
+            response = client.class.post(url + "/#{item_id}/score")
             raise response.to_s unless response.success?
           end
         end
