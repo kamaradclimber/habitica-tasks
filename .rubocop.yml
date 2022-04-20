@@ -1,0 +1,14 @@
+Style/Documentation:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Style/MultilineBlockChain:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 240
+
+Metrics/MethodLength:
+  Max: 30

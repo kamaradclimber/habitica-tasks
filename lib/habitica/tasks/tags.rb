@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'habitica_client/restful'
 require 'habitica_client/api_base'
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Habitica::Tasks do
   it 'has a version number' do
     expect(Habitica::Tasks::VERSION).not_to be nil

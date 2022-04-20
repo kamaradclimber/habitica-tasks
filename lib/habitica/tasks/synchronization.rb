@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'habitica/tasks/future_task'
 require 'habitica/tasks/jira_task'
 
