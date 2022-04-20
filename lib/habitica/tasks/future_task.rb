@@ -75,7 +75,7 @@ module Habitica
         restore_checklist(new_id, checklist)
 
         raise 'Now we should implement the ability to restore challenge' unless challenge.empty?
-        # raise "Now we should implement the ability to restore group" unless group TODO
+        raise 'Now we should implement the ability to restore group' unless group
       ensure
         # we have to restore the id to be able to identify the task
         self.id = id

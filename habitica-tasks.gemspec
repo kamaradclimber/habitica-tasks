@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary       = 'A gem to manage common patterns on habitica'
   spec.description   = 'A gem to manage common patterns on habitica'
   spec.license       = 'MIT'
-  spec.required_ruby_version = Gem::Requirement.new('>= 2.3.0')
+  spec.required_ruby_version = Gem::Requirement.new('>= 2.5.0')
 
   spec.homepage = 'https://github.com/kamaradclimber/habitica-tasks'
 
