@@ -10,8 +10,8 @@ module Habitica
 
       # @param task [HabiticaClient::Tasks]
       def initialize(task)
-        raise ArgumentError, "task is not a HabiticaClient::Task instance" unless task.is_a?(HabiticaClient::Task)
-        raise ArgumentError, "task cannot be considered as a jira task" unless self.class.match?(task)
+        raise ArgumentError, 'task is not a HabiticaClient::Task instance' unless task.is_a?(HabiticaClient::Task)
+        raise ArgumentError, 'task cannot be considered as a jira task' unless self.class.match?(task)
 
         @ticket_id = self.class.extract_to_ticket_id(task)
         super
@@ -22,7 +22,7 @@ module Habitica
       end
 
       def self.extract_to_ticket_id(task)
-        $1 if task.notes =~ PATTERN || task.text =~ PATTERN
+        Regexp.last_match(1) if task.notes =~ PATTERN || task.text =~ PATTERN
       end
 
       PATTERN = /\[JIRA:(\w+-\d+)\]/.freeze

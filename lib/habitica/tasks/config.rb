@@ -3,9 +3,7 @@ require 'yaml'
 module Habitica
   module Tasks
     class Config
-      attr_reader :user_id, :api_token
-
-      attr_reader :jira
+      attr_reader :user_id, :api_token, :jira
 
       # @param hash [Hash] the hash describing the config
       def initialize(hash)
@@ -16,7 +14,7 @@ module Habitica
         @jira.transform_values! do |value|
           case value
           when /^\$(.+)/
-            ENV[$1] || (raise "Impossible to find #{value} in environment")
+            ENV[Regexp.last_match(1)] || (raise "Impossible to find #{value} in environment")
           else
             value
           end

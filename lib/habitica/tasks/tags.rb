@@ -3,23 +3,23 @@ require 'habitica_client/api_base'
 
 module Habitica
   module Tasks
-
     class Tag < HabiticaClient::Restful
       extend Hashup
 
       endpoint '/tags'
 
       attr_accessor :name, :id, :challenge
+
       hashup :id, :name, :challenge
 
       def url
-        return "#{endpoint}/#{id}"
+        "#{endpoint}/#{id}"
       end
     end
 
     class Tags < HabiticaClient::ApiBase
       include Enumerable
-      
+
       endpoint '/tags'
 
       def each
@@ -27,7 +27,6 @@ module Habitica
           yield Tag.parse(client, tag)
         end
       end
-
     end
 
     module TagExtension

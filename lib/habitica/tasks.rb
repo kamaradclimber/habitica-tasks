@@ -1,4 +1,4 @@
-require "habitica/tasks/version"
+require 'habitica/tasks/version'
 
 module Habitica
   module Tasks

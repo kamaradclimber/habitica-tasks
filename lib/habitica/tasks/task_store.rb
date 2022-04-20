@@ -18,7 +18,7 @@ module Habitica
       end
 
       def all_stored_tasks
-          @client.tasks.dailies.select do |task|
+        @client.tasks.dailies.select do |task|
           task_has_tag?(task, 'habitica-tasks-internal')
         end.map do |task|
           raise "Unknown task_type for #{task}" unless task_has_tag?(task, 'task-type:future')
@@ -60,7 +60,7 @@ module Habitica
     class TaskStore
       # @param client [HabiticaClient::Client]
       # @param location [String] a directory path to the store
-      def initialize(client, location="#{ENV['HOME']}/.habitica_tasks/store")
+      def initialize(client, location = "#{ENV['HOME']}/.habitica_tasks/store")
         @client = client
         @location = location
         FileUtils.mkdir_p(@location)

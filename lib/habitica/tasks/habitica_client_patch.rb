@@ -6,7 +6,8 @@ module Hashup
     define_method(:to_h) do
       kv = attributes.map do |k|
         old_k = k
-        k = k.gsub(Regexp.last_match(0), "#{Regexp.last_match(1)}#{Regexp.last_match(2).upcase}") while k =~ /([a-z])_([a-z])/
+        k = k.gsub(Regexp.last_match(0),
+                   "#{Regexp.last_match(1)}#{Regexp.last_match(2).upcase}") while k =~ /([a-z])_([a-z])/
         [k, send(old_k)]
       end.delete_if { |_, v| v.nil? }
       Hash[kv]
@@ -16,7 +17,6 @@ end
 
 # patch habitica_client to support new fields
 class HabiticaClient
-
   class Task < HabiticaClient::Restful
     NEW_FIELDS = %i[
       counter_up counter_down by_habitica next_due yester_daily
@@ -26,7 +26,9 @@ class HabiticaClient
       attr_accessor field
     end
 
-    Task.instance_methods.group_by { |m| m.to_s.gsub(/=$/, '') }.select { |k, v| k =~ /\w/ && v.size > 1 }.keys.then do |all_attr|
+    Task.instance_methods.group_by do |m|
+      m.to_s.gsub(/=$/, '')
+    end.select { |k, v| k =~ /\w/ && v.size > 1 }.keys.then do |all_attr|
       hashup(*all_attr)
     end
 
@@ -44,5 +46,4 @@ class HabiticaClient
     base_uri 'https://habitica.com/api/v3/'
     debug_output $stdout if ENV['TROUBLESHOOT_HTTP']
   end
-
 end

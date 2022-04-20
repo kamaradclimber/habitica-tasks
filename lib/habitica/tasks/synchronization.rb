@@ -99,14 +99,18 @@ module Habitica
 
       def run
         # TODO(g.seux): allow to configure search query
-        unresolved_tickets = jira_client.Issue.jql("assignee = currentUser()  AND resolution is EMPTY AND issuetype not in (Epic) AND updated > -60days")
+        unresolved_tickets = jira_client.Issue.jql('assignee = currentUser()  AND resolution is EMPTY AND issuetype not in (Epic) AND updated > -60days')
         # TODO(g.seux): allow to store "achieved" tickets locally instead of updating tickets with a label
         achieved = jira_client.Issue.jql("assignee = currentUser()  AND resolution is not EMPTY AND issuetype not in (Epic) AND updated > -60days AND (labels is EMPTY or labels not in (#{resolved_label}))")
         jira_tasks = client
-          .tasks
-          .filter_map { |task| Habitica::Tasks::JiraTask.new(task) if Habitica::Tasks::JiraTask.match?(task) }
-        achieved.reject! { |task| task.key == 'SO-4987' } # DONT COMMIT THIS: this ticket is frozen and we don't handle this yet
-
+                     .tasks
+                     .filter_map do |task|
+          Habitica::Tasks::JiraTask.new(task) if Habitica::Tasks::JiraTask.match?(task)
+        end
+        # DONT COMMIT THIS: this ticket is frozen and we don't handle this yet
+        achieved.reject! do |task|
+          task.key == 'SO-4987'
+        end
         created_tasks = create_missing_tickets(unresolved_tickets + achieved, jira_tasks)
         resolve_tasks(achieved, jira_tasks + created_tasks)
       end
@@ -121,8 +125,8 @@ module Habitica
 
           log_action("Complete #{ticket.key}") do
             existing_labels = ticket.fields['labels']
-            result = ticket.save({fields: { labels: existing_labels + [resolved_label]}})
-            raise "Failure to update ticket" unless result
+            result = ticket.save({ fields: { labels: existing_labels + [resolved_label] } })
+            raise 'Failure to update ticket' unless result
 
             tasks_by_ticket_id[ticket.key].score_up
           end
