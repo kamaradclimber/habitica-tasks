@@ -4,7 +4,6 @@ require 'delegate'
 
 module Habitica
   module Tasks
-    # A task that should be created only in the future
     class JiraTask < SimpleDelegator
       include StorableTask
 

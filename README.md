@@ -18,9 +18,14 @@ api_token: xxx-xxx-xxx-xxx-xxxx
 
 Some tasks cannot be started before a given time. It's tempting to create them in advance but since we cannot work on them, they'll artificially change color (giving more XP for no good reason).
 
-To create a future task, use habitica interface to create a ToDo and add `[create_on:2021-05-26]` in the description. Then run habitica-tasks binary, it will delete the task (😱) and recreate it when you'll re-run the habitica-tasks binary on (or after) the planned creation date.
+To create a future task, use habitica interface to create a ToDo and add `[create_on:2021-05-26]` in the description. Then run habitica-tasks binary, it will temporarily move the task as a daily starting on the create date. If you re-run the script on the `create_on` date, the daily will be removed and original ToDo will be created again. (If you don't run the script, the todo will appear anyway, so you can't loose your task).
 
 Tip: run `habitica-tasks` with a timer on your computer/server.
+
+## Late Tasks
+
+For "dailies" having a low frequency (less than once per week), a followup "LATE" task will be created to allow to make it right. Points/streak are already lost but at least you have an opportunity to do your task. If you don't want to do it anyway, just delete the `[LATE]` task.
+If a task is not suitable for this feature, just add `task-type:no-followup` tag to the daily.
 
 ## Jira tasks
 

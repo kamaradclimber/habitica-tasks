@@ -2,6 +2,8 @@
 
 require 'habitica/tasks/future_task'
 require 'habitica/tasks/jira_task'
+require 'habitica/tasks/late_task'
+require 'habitica/tasks/occurences'
 
 module Habitica
   module Tasks
@@ -187,6 +189,46 @@ module Habitica
           2
         else
           1 # for now we ignore other values
+        end
+      end
+    end
+
+    # This class detects dailys that run with a low-frequency (< 1/week) that have been missed and pushed them to today.
+    # Goal is to make sure we don't forget a rare daily.
+    # A special tag can be used to avoid doing this for some dailies if it is not relevant
+    class AutoForwardMissedDailies < SynchronizationTask
+      require 'time'
+
+      # NOTE: this tag should be created manually
+      NO_FOLLOW_UP_TAG = 'task-type:no-followup'
+
+      def run
+        all_tasks = client.tasks
+        existing_late_tasks = all_tasks.filter_map do |task|
+          Habitica::Tasks::LateTask.new(task) if Habitica::Tasks::LateTask.match?(task)
+        end
+        all_tasks
+          .select(&:daily?)
+          .reject { |task| task.start_date > Date.today } # reject future tasks of any kind
+          .reject { |task| task.frequency == 'weekly' && task.every_x == 1 } # reject very frequent tasks
+          .reject { |task| task.frequency == 'daily' && task.every_x == 1 } # reject very frequent tasks
+          .reject(&:last_occurence_completed?)
+          .reject { |task| task.created_at >= task.real_start_date } # sometimes I create task a posteriori
+          .reject { |task| task.tag?(NO_FOLLOW_UP_TAG) }
+          .reject { |task| task.notes =~ /NB: followup created for #{task.last_occurence} occurence/ }
+          .each do |task|
+            next unless !task.completed? && existing_late_tasks.none? { |lt| lt.text == "[LATE] #{task.text}" }
+
+            create_late_task(task)
+            # and now we try to mark the original task as done
+            task.notes += "\nNB: followup created for #{task.last_occurence} occurence"
+            task.save
+          end
+      end
+
+      def create_late_task(incompleted_recuring_task)
+        log_action("Creating follow-up for '#{incompleted_recuring_task.text}' in habitica") do
+          Habitica::Tasks::LateTask.build_from(client, incompleted_recuring_task)
         end
       end
     end
