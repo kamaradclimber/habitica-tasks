@@ -8,6 +8,7 @@ module Habitica
     class FutureTask < SimpleDelegator
       include StorableTask
 
+      # @return [DateTime]
       attr_reader :to_create_date
 
       # @param task [HabiticaClient::Task]
@@ -24,6 +25,7 @@ module Habitica
         !!extract_to_create_date(task) && task.type == 'todo'
       end
 
+      # @return [DateTime]
       def self.extract_to_create_date(task)
         Date.parse(Regexp.last_match(1)) if task.notes =~ PATTERN
       end
@@ -61,6 +63,8 @@ module Habitica
           # recreating due date
           self.date = DateTime.parse(Regexp.last_match(1)).to_s
           notes.gsub!(Regexp.last_match(0), '')
+        else
+          self.date = to_create_date.to_s
         end
         # no update of the task beyond this point
         hash = to_h
