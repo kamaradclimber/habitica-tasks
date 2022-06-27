@@ -57,6 +57,12 @@ module Habitica
       def recreate
         id = self.id
         self.id = nil # force recreation
+        if notes =~ /\[due_on:(\d{4}-\d{2}-\d{2})\]/
+          # recreating due date
+          self.date = DateTime.parse(Regexp.last_match(1)).to_s
+          notes.gsub!(Regexp.last_match(0), '')
+        end
+        # no update of the task beyond this point
         hash = to_h
         checklist = hash.delete('checklist')
         challenge = hash.delete('challenge') # TODO: readd to challenge if necessary

@@ -47,6 +47,7 @@ module Habitica
       # @param task [StorableTask]
       def store(task)
         new_task = task.dup
+        new_task.notes += "[due_on:#{new_task.date.strftime('%Y-%m-%d')}]" if new_task.date
         new_task.id = nil if new_task.type != 'daily' # let's create a new task if we are changing the task type
         new_task.type = 'daily'
         # in case this script does not run, the task will appear everyday
