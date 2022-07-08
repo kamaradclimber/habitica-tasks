@@ -105,7 +105,13 @@ module Habitica
         # TODO(g.seux): allow to configure search query
         unresolved_tickets = jira_client.Issue.jql('assignee = currentUser()  AND resolution is EMPTY AND issuetype not in (Epic) AND updated > -60days')
         # TODO(g.seux): allow to store "achieved" tickets locally instead of updating tickets with a label
-        achieved = jira_client.Issue.jql("assignee = currentUser()  AND resolution is not EMPTY AND issuetype not in (Epic) AND updated > -60days AND (labels is EMPTY or labels not in (#{resolved_label}))")
+        achieved = jira_client.Issue.jql([
+                                           'assignee = currentUser()',
+                                           'resolution is not EMPTY',
+                                           'issuetype not in (Epic)',
+                                           'status CHANGED DURING (startOfWeek("-60d"), now())',
+                                           "(labels is EMPTY or labels not in (#{resolved_label}))"
+                                         ])
         jira_tasks = client
                      .tasks
                      .filter_map do |task|
