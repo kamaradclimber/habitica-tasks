@@ -39,6 +39,8 @@ scheduler.schedule_every "#{period_in_secs}s", first_at: (Time.now + 60), overla
   LastSuccess.time(Time.now)
 end
 
+set :port, ENV['PORT'] || 4567
+
 helpers do
   def recent_run?
     LastSuccess.time && (LastSuccess.time > Time.now - 2 * period_in_secs)
