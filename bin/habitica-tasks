@@ -24,11 +24,13 @@ class LastSuccess
     @last_success = value if value
     @last_success
   end
+
+  def self.period_in_secs
+    3600
+  end
 end
 
-period_in_secs = 3600
-
-job = scheduler.schedule_every "#{period_in_secs}s", first_at: (Time.now + 60), overlap: false, timeout: "#{2*period_in_secs}s" do
+job = scheduler.schedule_every "#{LastSuccess.period_in_secs}s", first_at: (Time.now + 60), overlap: false, timeout: "#{2*LastSuccess.period_in_secs}s" do
   Habitica::Tasks::FutureTaskToStore.new(client, config).run
   Habitica::Tasks::StoreToFutureTask.new(client, config).run
 
@@ -43,7 +45,7 @@ set :port, ENV['PORT'] || 4567
 
 helpers do
   def recent_run?
-    LastSuccess.time && (LastSuccess.time > Time.now - 2 * period_in_secs)
+    LastSuccess.time && (LastSuccess.time > Time.now - 2 * LastSuccess.period_in_secs)
   end
 end
 
