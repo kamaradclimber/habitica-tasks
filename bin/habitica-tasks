@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+
+require 'sinatra'
+require 'rufus-scheduler'
+
 require 'habitica/tasks/habitica_client_patch'
 require 'habitica/tasks/config'
 require 'habitica/tasks/task_store'
@@ -10,9 +14,42 @@ require 'habitica/tasks/synchronization'
 config = Habitica::Tasks::Config.load(ENV['HABITICA_TASKS_CONFIG_FILE'])
 client = HabiticaClient.new(config.user_id, config.api_token)
 
-Habitica::Tasks::FutureTaskToStore.new(client, config).run
-Habitica::Tasks::StoreToFutureTask.new(client, config).run
+scheduler = Rufus::Scheduler.new
 
-Habitica::Tasks::JiraToHabitica.new(client, config).run
+# ugly singleton object to be accessed from everywhere
+class LastSuccess
+  @last_success = nil
 
-Habitica::Tasks::AutoForwardMissedDailies.new(client, config).run
+  def self.time(value=nil)
+    @last_success = value if value
+    @last_success
+  end
+end
+
+period_in_secs = 3600
+
+scheduler.schedule_every "#{period_in_secs}s", first_at: (Time.now + 60), overlap: false, timeout: "#{2*period_in_secs}s" do
+  Habitica::Tasks::FutureTaskToStore.new(client, config).run
+  Habitica::Tasks::StoreToFutureTask.new(client, config).run
+
+  Habitica::Tasks::JiraToHabitica.new(client, config).run
+
+  Habitica::Tasks::AutoForwardMissedDailies.new(client, config).run
+
+  LastSuccess.time(Time.now)
+end
+
+helpers do
+  def recent_run?
+    LastSuccess.time && (LastSuccess.time > Time.now - 2 * period_in_secs)
+  end
+end
+
+get '/' do
+  'See /health instead'
+end
+
+get '/health' do
+  body({last_run: "Last successful run was #{LastSuccess.time}"}.to_json)
+  status(recent_run? ? 200 : 502)
+end
