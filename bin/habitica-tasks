@@ -31,6 +31,7 @@ class LastSuccess
 end
 
 job = scheduler.schedule_every "#{LastSuccess.period_in_secs}s", first_at: (Time.now + 60), overlap: false, timeout: "#{2*LastSuccess.period_in_secs}s" do
+  puts "Starting habitica sync"
   Habitica::Tasks::FutureTaskToStore.new(client, config).run
   Habitica::Tasks::StoreToFutureTask.new(client, config).run
 
@@ -38,6 +39,7 @@ job = scheduler.schedule_every "#{LastSuccess.period_in_secs}s", first_at: (Time
 
   Habitica::Tasks::AutoForwardMissedDailies.new(client, config).run
 
+  puts "habitica sync ✅"
   LastSuccess.time(Time.now)
 end
 
