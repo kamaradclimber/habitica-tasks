@@ -28,7 +28,7 @@ end
 
 period_in_secs = 3600
 
-scheduler.schedule_every "#{period_in_secs}s", first_at: (Time.now + 60), overlap: false, timeout: "#{2*period_in_secs}s" do
+job = scheduler.schedule_every "#{period_in_secs}s", first_at: (Time.now + 60), overlap: false, timeout: "#{2*period_in_secs}s" do
   Habitica::Tasks::FutureTaskToStore.new(client, config).run
   Habitica::Tasks::StoreToFutureTask.new(client, config).run
 
@@ -54,4 +54,9 @@ end
 get '/health' do
   body({last_run: "Last successful run was #{LastSuccess.time}"}.to_json)
   status(recent_run? ? 200 : 502)
+end
+
+get '/job' do
+  content_type 'application/json'
+  {next_run: job.next_time.utc}.to_json
 end
