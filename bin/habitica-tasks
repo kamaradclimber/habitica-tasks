@@ -64,3 +64,13 @@ get '/job' do
   content_type 'application/json'
   {next_run: job.next_time.utc}.to_json
 end
+
+post '/sync' do
+  content_type 'application/json'
+  begin
+    job.call(true)
+    {ok: true}.to_json
+  rescue RuntimeError => e
+    {ok: false, error: e.message, error_class: e.class.name}.to_json
+  end
+end
