@@ -35,7 +35,7 @@ job = scheduler.schedule_every "#{LastSuccess.period_in_secs}s", first_at: (Time
   Habitica::Tasks::FutureTaskToStore.new(client, config).run
   Habitica::Tasks::StoreToFutureTask.new(client, config).run
 
-  Habitica::Tasks::JiraToHabitica.new(client, config).run
+  Habitica::Tasks::JiraToHabitica.new(client, config).run if config.jira.key?('username')
 
   Habitica::Tasks::AutoForwardMissedDailies.new(client, config).run
 
