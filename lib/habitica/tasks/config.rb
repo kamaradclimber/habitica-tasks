@@ -13,7 +13,7 @@ module Habitica
         @api_token = hash['api_token']
 
         @jira = hash['jira']
-        @jira.transform_values! do |value|
+        @jira&.transform_values! do |value|
           case value
           when /^\$(.+)/
             ENV[Regexp.last_match(1)] || (raise "Impossible to find #{value} in environment")
